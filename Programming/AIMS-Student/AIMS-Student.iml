@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="CheckStyle-IDEA-Module">
+    <option name="configuration">
+      <map />
+    </option>
+  </component>
   <component name="EclipseModuleManager">
     <libelement value="jar://$MODULE_DIR$/lib/sqlite-jdbc-3.7.2.jar!/" />
     <src_description expected_position="0">
@@ -25,7 +30,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="JavaFX15" level="project" />
     <orderEntry type="module-library" exported="">
       <library name="sqlite-jdbc-3.7.2.jar">
         <CLASSES>

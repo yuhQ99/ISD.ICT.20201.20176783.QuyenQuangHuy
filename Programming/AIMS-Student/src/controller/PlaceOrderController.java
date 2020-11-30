@@ -16,7 +16,7 @@ import entity.order.OrderMedia;
 import views.screen.popup.PopupScreen;
 
 /**
- * This class controls the flow of place order usecase in our AIMS project
+ * This class controls the flow of place order use case in our AIMS project
  * @author nguyenlm
  */
 public class PlaceOrderController extends BaseController{
@@ -27,7 +27,7 @@ public class PlaceOrderController extends BaseController{
     private static Logger LOGGER = utils.Utils.getLogger(PlaceOrderController.class.getName());
 
     /**
-     * This method checks the avalibility of product when user click PlaceOrder button
+     * This method checks the availability of product when user click PlaceOrder button
      * @throws SQLException
      */
     public void placeOrder() throws SQLException{
@@ -109,8 +109,8 @@ public class PlaceOrderController extends BaseController{
         //check empty
         if(address.equals("null") || address.isEmpty()) return false;
 
-        if(!address.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9,]+)*$")) return false;
-//        if(!address.matches("^[A-Za-z0-9]+$")) return false;
+        if(!address.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9]+)*$")) return false;
+
         return true;
     }
     
