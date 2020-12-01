@@ -20,7 +20,8 @@ class validateAddressForRushTest {
             "hanoi, true",
             "so 49, Hoang hoa tham Street, Ha nOI, true",
             "hoang hoa tham, false",
-            "Bui Vien, Ho Chi Minh City, false"
+            "Bui Vien, Ho Chi Minh City, false",
+            "   Ha   Noi   , true"
     })
 
     void test(String address, boolean expected) {

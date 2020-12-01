@@ -48,6 +48,7 @@ public class PlaceOrderController extends BaseController{
                                                    cartMedia.getPrice());    
             order.getlstOrderMedia().add(orderMedia);
         }
+
         return order;
     }
 
@@ -73,13 +74,23 @@ public class PlaceOrderController extends BaseController{
     }
     
     /**
-   * The method validates the info
+   * The method validates the info (still in progress)
    * @param info
    * @throws InterruptedException
    * @throws IOException
    */
     public void validateDeliveryInfo(HashMap<String, String> info) throws InterruptedException, IOException{
-    	
+    	for (String key : info.keySet()) {
+            if (key.equals("name")) {
+                validateName(info.get(key));
+            }
+    	    if (key.equals("phone")) {
+                validatePhoneNumber(info.get(key));
+            }
+            if (key.equals("address")) {
+                validateAddress(info.get(key));
+            }
+    	}
     }
     
     public boolean validatePhoneNumber(String phoneNumber) {
@@ -99,9 +110,7 @@ public class PlaceOrderController extends BaseController{
     	// TODO: your work
         if(name.equals("null") || name.isEmpty()) return false;
 
-        if(!name.matches("^[A-Za-z]+(?:\\s[a-zA-Z]+)+$")) return false;
-
-        return true;
+        return name.matches("^[A-Za-z]+(?:\\s[a-zA-Z]+)+$");
     }
     
     public boolean validateAddress(String address) {
@@ -109,9 +118,7 @@ public class PlaceOrderController extends BaseController{
         //check empty
         if(address.equals("null") || address.isEmpty()) return false;
 
-        if(!address.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9]+)*$")) return false;
-
-        return true;
+        return address.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9]+)*$");
     }
     
 

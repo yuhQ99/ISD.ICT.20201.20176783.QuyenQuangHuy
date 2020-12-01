@@ -27,18 +27,20 @@ public class Media {
     protected int quantity;
     protected String type;
     protected String imageURL;
+    protected boolean isRushOrder;
 
     public Media() throws SQLException{
         stm = AIMSDB.getConnection().createStatement();
     }
 
-    public Media (int id, String title, String category, int price, int quantity, String type) throws SQLException{
+    public Media (int id, String title, String category, int price, int quantity, String type, boolean isRushOrder) throws SQLException{
         this.id = id;
         this.title = title;
         this.category = category;
         this.price = price;
         this.quantity = quantity;
         this.type = type;
+        this.isRushOrder = isRushOrder;
 
         //stm = AIMSDB.getConnection().createStatement();
     }
@@ -62,7 +64,8 @@ public class Media {
                 .setCategory(res.getString("category"))
                 .setMediaURL(res.getString("imageUrl"))
                 .setPrice(res.getInt("price"))
-                .setType(res.getString("type"));
+                .setType(res.getString("type"))
+                .setIsRushOrder(res.getBoolean("isRushOrder"));
         }
         return null;
     }
@@ -79,7 +82,9 @@ public class Media {
                 .setCategory(res.getString("category"))
                 .setMediaURL(res.getString("imageUrl"))
                 .setPrice(res.getInt("price"))
-                .setType(res.getString("type"));
+                .setType(res.getString("type"))
+                .setIsRushOrder(res.getBoolean("isRushOrder"));
+
             medium.add(media);
         }
         return medium;
@@ -155,6 +160,15 @@ public class Media {
         return this;
     }
 
+    public boolean getIsRushOrder() {
+        return isRushOrder;
+    }
+
+    public Media setIsRushOrder(boolean rushOrder) {
+        this.isRushOrder = rushOrder;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -165,6 +179,7 @@ public class Media {
             ", quantity='" + quantity + "'" +
             ", type='" + type + "'" +
             ", imageURL='" + imageURL + "'" +
+                ", rushOrderStatus='" + isRushOrder + "'" +
             "}";
     }    
 

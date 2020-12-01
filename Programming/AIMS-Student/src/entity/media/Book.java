@@ -22,10 +22,10 @@ public class Book extends Media {
 
     }
 
-    public Book(int id, String title, String category, int price, int quantity, String type, String author,
+    public Book(int id, String title, String category, int price, int quantity, String type, boolean isRushOrder, String author,
             String coverType, String publisher, Date publishDate, int numOfPages, String language,
             String bookCategory) throws SQLException{
-        super(id, title, category, price, quantity, type);
+        super(id, title, category, price, quantity, type, isRushOrder);
         this.author = author;
         this.coverType = coverType;
         this.publisher = publisher;
@@ -120,6 +120,7 @@ public class Book extends Media {
             int price = res.getInt("price");
             String category = res.getString("category");
             int quantity = res.getInt("quantity");
+            boolean isRushOrder = res.getBoolean("isRushOrder");
 
             // from Book table
             String author = res.getString("author");
@@ -130,7 +131,7 @@ public class Book extends Media {
             String language = res.getString("language");
             String bookCategory = res.getString("bookCategory");
             
-            return new Book(id, title, category, price, quantity, type, 
+            return new Book(id, title, category, price, quantity, type, isRushOrder,
                             author, coverType, publisher, publishDate, numOfPages, language, bookCategory);
             
 		} else {
