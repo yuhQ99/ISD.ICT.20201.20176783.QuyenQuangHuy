@@ -13,6 +13,9 @@ import common.exception.InvalidDeliveryInfoException;
 import entity.invoice.Invoice;
 import entity.order.Order;
 import entity.order.OrderMedia;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import views.screen.popup.PopupScreen;
 
 /**
@@ -82,7 +85,9 @@ public class PlaceOrderController extends BaseController{
     public void validateDeliveryInfo(HashMap<String, String> info) throws InterruptedException, IOException{
     	for (String key : info.keySet()) {
             if (key.equals("name")) {
-                validateName(info.get(key));
+                if(validateName(info.get(key)) == false) {
+
+                }
             }
     	    if (key.equals("phone")) {
                 validatePhoneNumber(info.get(key));
@@ -110,7 +115,7 @@ public class PlaceOrderController extends BaseController{
     	// TODO: your work
         if(name.equals("null") || name.isEmpty()) return false;
 
-        return name.matches("^[A-Za-z]+(?:\\s[a-zA-Z]+)+$");
+        return name.matches("^[A-Za-z]+(?:\\s[a-zA-Z]+)*$");
     }
     
     public boolean validateAddress(String address) {
@@ -118,9 +123,41 @@ public class PlaceOrderController extends BaseController{
         //check empty
         if(address.equals("null") || address.isEmpty()) return false;
 
-        return address.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9]+)*$");
+        return address.matches("^[A-Za-z0-9,]+(?:\\s[a-zA-Z0-9,]+)*$");
     }
-    
+
+    public boolean validatePhoneNumber(String phoneNumber, Label lb, String errorMessage) {
+        boolean b = true;
+        String msg = null;
+        if(validatePhoneNumber(phoneNumber) == false) {
+            b = false;
+            msg = errorMessage;
+        }
+        lb.setText(msg);
+        return b;
+    }
+
+    public boolean validateName(String name, Label lb, String errorMessage) {
+        boolean b = true;
+        String msg = null;
+        if(validateName(name) == false) {
+            b = false;
+            msg = errorMessage;
+        }
+        lb.setText(msg);
+        return b;
+    }
+
+    public boolean validateAddress(String address, Label lb, String errorMessage) {
+        boolean b = true;
+        String msg = null;
+        if(validateAddress(address) == false) {
+            b = false;
+            msg = errorMessage;
+        }
+        lb.setText(msg);
+        return b;
+    }
 
     /**
      * This method calculates the shipping fees of order

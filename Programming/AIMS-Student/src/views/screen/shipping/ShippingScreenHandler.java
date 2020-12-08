@@ -44,6 +44,15 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 	@FXML
 	private ComboBox<String> province;
 
+	@FXML
+	private Label error_name;
+
+	@FXML
+	private Label error_phone;
+
+	@FXML
+	private Label error_address;
+
 	private Order order;
 
 	public ShippingScreenHandler(Stage stage, String screenPath, Order order) throws IOException {
@@ -66,6 +75,9 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 	@FXML
 	void submitDeliveryInfo(MouseEvent event) throws IOException, InterruptedException, SQLException {
 
+		boolean validatePhone = getBController().validatePhoneNumber(phone.getText(), error_phone, "Phone number is not identified");
+		boolean validateName = getBController().validateName(name.getText(), error_name, "Name is not identified");
+		boolean validateAddress = getBController().validateAddress(address.getText(), error_address, "Address is not identified");
 		// add info to messages
 		HashMap messages = new HashMap<>();
 		messages.put("name", name.getText());
@@ -76,23 +88,27 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 		try {
 			// process and validate delivery info
 			getBController().processDeliveryInfo(messages);
+
+
 		} catch (InvalidDeliveryInfoException e) {
 			throw new InvalidDeliveryInfoException(e.getMessage());
 		}
-	
-		// calculate shipping fees
-		int shippingFees = getBController().calculateShippingFee(order);
-		order.setShippingFees(shippingFees);
-		order.setDeliveryInfo(messages);
-		
-		// create invoice screen
-		Invoice invoice = getBController().createInvoice(order);
-		BaseScreenHandler InvoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
-		InvoiceScreenHandler.setPreviousScreen(this);
-		InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
-		InvoiceScreenHandler.setScreenTitle("Invoice Screen");
-		InvoiceScreenHandler.setBController(getBController());
-		InvoiceScreenHandler.show();
+
+		if(validatePhone && validateName && validateAddress) {
+			// calculate shipping fees
+			int shippingFees = getBController().calculateShippingFee(order);
+			order.setShippingFees(shippingFees);
+			order.setDeliveryInfo(messages);
+
+			// create invoice screen
+			Invoice invoice = getBController().createInvoice(order);
+			BaseScreenHandler InvoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
+			InvoiceScreenHandler.setPreviousScreen(this);
+			InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
+			InvoiceScreenHandler.setScreenTitle("Invoice Screen");
+			InvoiceScreenHandler.setBController(getBController());
+			InvoiceScreenHandler.show();
+		}
 	}
 
 	public PlaceOrderController getBController(){

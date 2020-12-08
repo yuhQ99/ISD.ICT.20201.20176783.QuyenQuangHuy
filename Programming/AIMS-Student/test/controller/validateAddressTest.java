@@ -19,7 +19,7 @@ class validateAddressTest {
     @ParameterizedTest
     @CsvSource({
             "Ha Noi, true" ,
-            "so 49, Hoang hoa tham Street, Ha nOI, true",
+            "so 49 Hoang hoa tham Street Ha noi, true",
             "Kham THien, true"
     })
 

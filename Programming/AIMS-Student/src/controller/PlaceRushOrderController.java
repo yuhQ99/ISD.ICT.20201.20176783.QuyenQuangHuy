@@ -24,33 +24,33 @@ import java.util.Random;
  * This class controls the flow of place rush order use case in our AIMS project
  * @author huyqq
  */
-public class PlaceRushOrderController extends PlaceOrderController {
+public class PlaceRushOrderController extends BaseController {
 
-//    /**
-//     * This method checks the availability of product when user click PlaceRushOrder button
-//     * @throws SQLException
-//     */
-//    public void placeRushOrder() throws SQLException {
-//        Cart.getCart().checkAvailabilityOfProduct();
-//    }
-//
-//    /**
-//     * This method creates the new Order based on the Cart
-//     * @return Order
-//     * @throws SQLException
-//     */
-//    public Order createOrder() throws SQLException {
-//        Order order = new Order();
-//        for (Object object : Cart.getCart().getListMedia()) {
-//            CartMedia cartMedia = (CartMedia) object;
-//            OrderMedia orderMedia = new OrderMedia(cartMedia.getMedia(),
-//                    cartMedia.getQuantity(),
-//                    cartMedia.getPrice());
-//            order.getlstOrderMedia().add(orderMedia);
-//        }
-//
-//        return order;
-//    }
+    /**
+     * This method checks the availability of product when user click PlaceRushOrder button
+     * @throws SQLException
+     */
+    public void placeRushOrder() throws SQLException {
+        Cart.getCart().checkAvailabilityOfProduct();
+    }
+
+    /**
+     * This method creates the new Order based on the Cart
+     * @return Order
+     * @throws SQLException
+     */
+    public Order createOrder() throws SQLException {
+        Order order = new Order();
+        for (Object object : Cart.getCart().getListMedia()) {
+            CartMedia cartMedia = (CartMedia) object;
+            OrderMedia orderMedia = new OrderMedia(cartMedia.getMedia(),
+                    cartMedia.getQuantity(),
+                    cartMedia.getPrice());
+            order.getlstOrderMedia().add(orderMedia);
+        }
+
+        return order;
+    }
 
     /**
      * This method split Order into normal order based on the Cart
@@ -104,7 +104,7 @@ public class PlaceRushOrderController extends PlaceOrderController {
         String tmp = address.trim().replaceAll(" +", " ");
         if(tmp.equals("null") || address.isEmpty()) return false;
 
-        if(!tmp.matches("^[A-Za-z0-9]+(?:\\s[a-zA-Z0-9]+)*$")) return false;
+        if(!tmp.matches("^[A-Za-z0-9,]+(?:\\s[a-zA-Z0-9,]+)*$")) return false;
 
         if (tmp.toUpperCase().contains((str1.toUpperCase()))) return true;
 
@@ -131,7 +131,6 @@ public class PlaceRushOrderController extends PlaceOrderController {
      * @param order Order of media
      * @return fees fee that user has to pay for rush order
      */
-    @Override
     public int calculateShippingFee(Order order) {
         Random rand = new Random();
         int fees = (int)( ( (rand.nextFloat()*10)/100 ) * order.getAmount() );

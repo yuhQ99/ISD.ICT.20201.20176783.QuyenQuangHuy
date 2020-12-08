@@ -54,6 +54,9 @@ public class CartScreenHandler extends BaseScreenHandler {
 	@FXML
 	private Button btnPlaceOrder;
 
+	@FXML
+	private Button btnPlaceRushOrder;
+
 	public CartScreenHandler(Stage stage, String screenPath) throws IOException {
 		super(stage, screenPath);
 
@@ -67,7 +70,7 @@ public class CartScreenHandler extends BaseScreenHandler {
 			homeScreenHandler.show();
 		});
 
-		// on mouse clicked, we start processing place order usecase
+		// on mouse clicked, we start processing place order use case
 		btnPlaceOrder.setOnMouseClicked(e -> {
 			LOGGER.info("Place Order button clicked");
 			try {
@@ -78,6 +81,19 @@ public class CartScreenHandler extends BaseScreenHandler {
 				throw new PlaceOrderException(Arrays.toString(exp.getStackTrace()).replaceAll(", ", "\n"));
 			}
 			
+		});
+
+		//on mouse clicked, we start processing place rush order use case
+		btnPlaceOrder.setOnMouseClicked(e -> {
+			LOGGER.info("Place Rush Order button clicked");
+			try {
+				requestToPlaceOrder();
+			} catch (SQLException | IOException exp) {
+				LOGGER.severe("Cannot place the order, see the logs");
+				exp.printStackTrace();
+				throw new PlaceOrderException(Arrays.toString(exp.getStackTrace()).replaceAll(", ", "\n"));
+			}
+
 		});
 	}
 
@@ -130,6 +146,10 @@ public class CartScreenHandler extends BaseScreenHandler {
 			// if some media are not available then display cart and break usecase Place Order
 			displayCartWithMediaAvailability();
 		}
+	}
+
+	public void requestToPlaceRushOrder() throws SQLException, IOException {
+
 	}
 
 	public void updateCart() throws SQLException{
