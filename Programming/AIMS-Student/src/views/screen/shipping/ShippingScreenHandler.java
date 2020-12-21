@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import controller.PlaceOrderController;
 import common.exception.InvalidDeliveryInfoException;
+import controller.PlaceRushOrderController;
 import entity.invoice.Invoice;
 import entity.order.Order;
 import javafx.beans.property.BooleanProperty;
@@ -55,9 +56,12 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 
 	private Order order;
 
-	public ShippingScreenHandler(Stage stage, String screenPath, Order order) throws IOException {
+	private boolean rushOrderState;
+
+	public ShippingScreenHandler(Stage stage, String screenPath, Order order, boolean rushOrderState) throws IOException {
 		super(stage, screenPath);
 		this.order = order;
+		this.rushOrderState = rushOrderState;
 	}
 
 	@Override
@@ -78,6 +82,7 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 		boolean validatePhone = getBController().validatePhoneNumber(phone.getText(), error_phone, "Phone number is not identified");
 		boolean validateName = getBController().validateName(name.getText(), error_name, "Name is not identified");
 		boolean validateAddress = getBController().validateAddress(address.getText(), error_address, "Address is not identified");
+
 		// add info to messages
 		HashMap messages = new HashMap<>();
 		messages.put("name", name.getText());
@@ -85,6 +90,7 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 		messages.put("address", address.getText());
 		messages.put("instructions", instructions.getText());
 		messages.put("province", province.getValue());
+
 		try {
 			// process and validate delivery info
 			getBController().processDeliveryInfo(messages);
@@ -94,9 +100,11 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 			throw new InvalidDeliveryInfoException(e.getMessage());
 		}
 
-		if(validatePhone && validateName && validateAddress) {
+		int shippingFees;
+
+		if(validatePhone && validateName && validateAddress && (!rushOrderState)) {
 			// calculate shipping fees
-			int shippingFees = getBController().calculateShippingFee(order);
+			shippingFees = getBController().calculateShippingFee(order);
 			order.setShippingFees(shippingFees);
 			order.setDeliveryInfo(messages);
 
@@ -106,8 +114,40 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 			InvoiceScreenHandler.setPreviousScreen(this);
 			InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
 			InvoiceScreenHandler.setScreenTitle("Invoice Screen");
-			InvoiceScreenHandler.setBController(getBController());
+			//InvoiceScreenHandler.setBController(getBController());
 			InvoiceScreenHandler.show();
+		}
+		else if(validatePhone && validateName && validateAddress && rushOrderState) {
+			PlaceRushOrderController placeRushOrderController = new PlaceRushOrderController();
+
+			if(!placeRushOrderController.validateAddressForRushOrder(province.getValue())) {
+				PopupScreen.errorAutoClose("Your address cannot execute Place Rush Order");
+				//Thread.sleep(2000);
+				shippingFees = getBController().calculateShippingFee(order);
+				order.setShippingFees(shippingFees);
+				order.setDeliveryInfo(messages);
+
+				// create invoice screen
+				Invoice invoice = getBController().createInvoice(order);
+				BaseScreenHandler InvoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
+				InvoiceScreenHandler.setPreviousScreen(this);
+				InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
+				InvoiceScreenHandler.setScreenTitle("Invoice Screen");
+				//InvoiceScreenHandler.setBController(getBController());
+				InvoiceScreenHandler.show();
+				return;
+			}
+
+			shippingFees = placeRushOrderController.calculateShippingFee(order);
+			order.setShippingFees(shippingFees);
+			order.setDeliveryInfo(messages);
+
+			RushOrderScreenHandler RushOrderScreenHandler = new RushOrderScreenHandler(this.stage, Configs.RUSH_ORDER_SCREEN_PATH, order);
+			RushOrderScreenHandler.setPreviousScreen(this);
+			RushOrderScreenHandler.setHomeScreenHandler(homeScreenHandler);
+			RushOrderScreenHandler.setScreenTitle("Rush Order Screen");
+			RushOrderScreenHandler.setBController(placeRushOrderController);
+			RushOrderScreenHandler.show();
 		}
 	}
 

@@ -1,30 +1,25 @@
 package controller;
 
-//import java.io.IOException;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Random;
-//import java.util.logging.Logger;
-
-
-//import common.exception.InvalidDeliveryInfoException;
-//import entity.invoice.Invoice;
-
-//import views.screen.popup.PopupScreen;
-
 import entity.cart.Cart;
 import entity.cart.CartMedia;
+import entity.invoice.Invoice;
 import entity.order.Order;
 import entity.order.OrderMedia;
-
 import java.sql.SQLException;
 import java.util.Random;
+import java.util.logging.Logger;
+import javafx.scene.control.Label;
 
 /**
  * This class controls the flow of place rush order use case in our AIMS project
  * @author huyqq
  */
 public class PlaceRushOrderController extends BaseController {
+
+    /**
+     * Just for logging purpose
+     */
+    private static Logger LOGGER = utils.Utils.getLogger(PlaceRushOrderController.class.getName());
 
     /**
      * This method checks the availability of product when user click PlaceRushOrder button
@@ -93,22 +88,22 @@ public class PlaceRushOrderController extends BaseController {
     }
 
     /**
-     * Check address for rush order (address must in Hanoi to rush order)
-     * @param address the address that user provides
-     * @return result
+     * This method creates the new Invoice based on order
+     * @param order
+     * @return Invoice
      */
-    public boolean validateAddressForRushOrder(String address) {
+    public Invoice createInvoice(Order order) {
+        return new Invoice(order);
+    }
+
+    /**
+     * Check address for rush order (address must in Hanoi to rush order)
+     * @param province the address that user provides
+     * @return result return true if province is Ha Noi, false otherwise
+     */
+    public boolean validateAddressForRushOrder(String province) {
         //check empty
-        String str1 = "ha noi";
-        String str2 = "hanoi";
-        String tmp = address.trim().replaceAll(" +", " ");
-        if(tmp.equals("null") || address.isEmpty()) return false;
-
-        if(!tmp.matches("^[A-Za-z0-9,]+(?:\\s[a-zA-Z0-9,]+)*$")) return false;
-
-        if (tmp.toUpperCase().contains((str1.toUpperCase()))) return true;
-
-        return tmp.toUpperCase().contains((str2.toUpperCase()));
+        return(province.equals("Hà Nội"));
     }
 
     /**
@@ -126,6 +121,16 @@ public class PlaceRushOrderController extends BaseController {
         return true;
     }
 
+    public boolean validateTimeExpectedInterval(String hour, Label lb, String errorMessage) {
+        boolean b = true;
+        String msg = null;
+        if(validateTimeExpectedInterval(hour) == false) {
+            b = false;
+            msg = errorMessage;
+        }
+        lb.setText(msg);
+        return b;
+    }
     /**
      * This method calculate fee for rush order
      * @param order Order of media
@@ -135,8 +140,8 @@ public class PlaceRushOrderController extends BaseController {
         Random rand = new Random();
         int fees = (int)( ( (rand.nextFloat()*10)/100 ) * order.getAmount() );
         for(Object object : order.getlstOrderMedia()) {
-            CartMedia cartMedia = (CartMedia) object;
-            if(cartMedia.getMedia().getIsRushOrder())
+            OrderMedia om = (OrderMedia) object;
+            if(om.getMedia().getIsRushOrder())
                 fees += 10000;
         }
         return fees;
