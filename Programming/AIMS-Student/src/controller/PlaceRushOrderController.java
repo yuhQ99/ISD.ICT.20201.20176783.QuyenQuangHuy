@@ -48,46 +48,6 @@ public class PlaceRushOrderController extends BaseController {
     }
 
     /**
-     * This method split Order into normal order based on the Cart
-     * @return normalOrder Order contains only media is not for rush order
-     * @throws SQLException
-     */
-    public Order createNormalOrder() throws SQLException{
-        Order normalOrder = new Order();
-        for (Object object : Cart.getCart().getListMedia()) {
-            CartMedia cartMedia = (CartMedia) object;
-            if(!cartMedia.getMedia().getIsRushOrder()) {
-                OrderMedia orderMedia = new OrderMedia(cartMedia.getMedia(),
-                        cartMedia.getQuantity(),
-                        cartMedia.getPrice());
-                normalOrder.getlstOrderMedia().add(orderMedia);
-            }
-        }
-
-        return normalOrder;
-    }
-
-    /**
-     * This method split Order into rush order based on the Cart
-     * @return rushOrder Order contains only rush order media
-     * @throws SQLException
-     */
-    public Order createRushOrder() throws SQLException{
-        Order rushOrder = new Order();
-        for (Object object : Cart.getCart().getListMedia()) {
-            CartMedia cartMedia = (CartMedia) object;
-            if(cartMedia.getMedia().getIsRushOrder()) {
-                OrderMedia orderMedia = new OrderMedia(cartMedia.getMedia(),
-                        cartMedia.getQuantity(),
-                        cartMedia.getPrice());
-                rushOrder.getlstOrderMedia().add(orderMedia);
-            }
-        }
-
-        return rushOrder;
-    }
-
-    /**
      * This method creates the new Invoice based on order
      * @param order
      * @return Invoice
@@ -131,6 +91,7 @@ public class PlaceRushOrderController extends BaseController {
         lb.setText(msg);
         return b;
     }
+
     /**
      * This method calculate fee for rush order
      * @param order Order of media
