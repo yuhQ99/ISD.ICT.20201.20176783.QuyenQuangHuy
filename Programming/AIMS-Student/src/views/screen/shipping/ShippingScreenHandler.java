@@ -11,6 +11,7 @@ import common.exception.InvalidDeliveryInfoException;
 import controller.PlaceRushOrderController;
 import entity.invoice.Invoice;
 import entity.order.Order;
+import javafx.animation.PauseTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -20,8 +21,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import utils.Configs;
 import views.screen.BaseScreenHandler;
+import views.screen.home.HomeScreenHandler;
 import views.screen.invoice.InvoiceScreenHandler;
 import views.screen.popup.PopupScreen;
 
@@ -100,9 +103,10 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 			throw new InvalidDeliveryInfoException(e.getMessage());
 		}
 
-		int shippingFees;
+
 
 		if(validatePhone && validateName && validateAddress && (!rushOrderState)) {
+			int shippingFees;
 			// calculate shipping fees
 			shippingFees = getBController().calculateShippingFee(order);
 			order.setShippingFees(shippingFees);
@@ -122,23 +126,32 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 
 			if(!placeRushOrderController.validateAddressForRushOrder(province.getValue())) {
 				PopupScreen.errorAutoClose("Your address cannot execute Place Rush Order");
-				//Thread.sleep(2000);
-				shippingFees = getBController().calculateShippingFee(order);
-				order.setShippingFees(shippingFees);
-				order.setDeliveryInfo(messages);
+				PauseTransition delay = new PauseTransition(Duration.seconds(1.5));
+				delay.setOnFinished(e -> {
+					try {
+						int shippingFees = getBController().calculateShippingFee(order);
+						order.setShippingFees(shippingFees);
+						order.setDeliveryInfo(messages);
 
-				// create invoice screen
-				Invoice invoice = getBController().createInvoice(order);
-				BaseScreenHandler InvoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
-				InvoiceScreenHandler.setPreviousScreen(this);
-				InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
-				InvoiceScreenHandler.setScreenTitle("Invoice Screen");
-				//InvoiceScreenHandler.setBController(getBController());
-				InvoiceScreenHandler.show();
+						// create invoice screen
+						Invoice invoice = getBController().createInvoice(order);
+						BaseScreenHandler InvoiceScreenHandler = new InvoiceScreenHandler(this.stage, Configs.INVOICE_SCREEN_PATH, invoice);
+						InvoiceScreenHandler.setPreviousScreen(this);
+						InvoiceScreenHandler.setHomeScreenHandler(homeScreenHandler);
+						InvoiceScreenHandler.setScreenTitle("Invoice Screen");
+						//InvoiceScreenHandler.setBController(getBController());
+						InvoiceScreenHandler.show();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				});
+				delay.play();
+
 				return;
 			}
 
-			shippingFees = placeRushOrderController.calculateShippingFee(order);
+			int shippingFees = placeRushOrderController.calculateShippingFee(order);
 			order.setShippingFees(shippingFees);
 			order.setDeliveryInfo(messages);
 
